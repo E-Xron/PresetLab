@@ -1,0 +1,280 @@
+#pragma once
+#include <vector>
+
+// Factory presets. Each one starts from the default sound and changes only what it lists:
+//   key=value              any instrument parameter (choices by name, spaces written as _)
+//   s1..s6=Type:a,b,c,d:mix  a stomp (1-3, before the amp) or rack slot (4-6, after the cab)
+//   amp=Model:gain,bass,mid,treble,presence,master
+//   cab=Model:mic,room,level
+// Presets never change the mode, input, master volume or chord generator settings.
+namespace presets
+{
+    struct Preset { const char* category; const char* name; const char* data; };
+
+    inline const std::vector<const char*>& categories()
+    {
+        static const std::vector<const char*> c { "Guitar", "Bass", "Keys", "Organ", "Synth Lead", "Synth Bass", "Pads", "Strings & Brass",
+                                                  "Bells & Mallets", "Wind", "Drums", "FX & Textures", "Live Guitar", "Live Bass", "Live Vocal & Mic" };
+        return c;
+    }
+
+    inline const std::vector<Preset>& factory()
+    {
+        static const std::vector<Preset> list {
+            // ---------------- Guitar
+            { "Guitar", "Steel String Acoustic",  "inst=Acoustic_Guitar tone=.65 charA=.35 charB=.55 dec=1.5 rel=.4 s4=Compressor:.35,.3,.5 s6=Room_Reverb:.45,.5,.1:.2" },
+            { "Guitar", "Nylon Classical",        "inst=Acoustic_Guitar tone=.3 charA=.65 charB=.75 dec=1.3 rel=.5 s6=Hall_Reverb:.5,.5,.2:.22" },
+            { "Guitar", "Bright Strummer",        "inst=Acoustic_Guitar tone=.85 charA=.2 charB=.4 dec=1.2 s4=Compressor:.5,.2,.5 s5=Chorus:.25,.3,.7:.25 s6=Plate_Reverb:.4,.3,.1:.2" },
+            { "Guitar", "Folk Fingerpicker",      "inst=Acoustic_Guitar tone=.55 charA=.5 charB=.6 dec=2 s6=Room_Reverb:.6,.4,.15:.25" },
+            { "Guitar", "12-String Shimmer",      "inst=Acoustic_Guitar tone=.8 charA=.25 charB=.45 s5=Chorus:.35,.7,.8:.5 s6=Hall_Reverb:.6,.3,.2:.3" },
+            { "Guitar", "Harp Pluck",             "inst=Acoustic_Guitar tone=.5 charA=.5 charB=0 dec=3.5 rel=1.5 s6=Hall_Reverb:.7,.4,.2:.35" },
+            { "Guitar", "Clean Single Coil",      "inst=Electric_Guitar tone=.7 charA=.15 charB=.1 amp=Clean_American:.3,.5,.5,.6,.55,.6 cab=2x12_Blue:.35,.15,0 s6=Spring_Reverb:.5,.5,.5:.25" },
+            { "Guitar", "Funk Rhythm",            "inst=Electric_Guitar tone=.8 charA=.05 charB=.2 dec=.6 rel=.08 s1=Compressor:.6,.15,.55 s2=Auto-Wah:.6,.6,.7 amp=Clean_American:.25,.45,.55,.65,.6,.6 cab=1x12_Open_Back:.3,.1,0" },
+            { "Guitar", "Jazz Box",               "inst=Electric_Guitar tone=.3 charA=.9 charB=0 amp=Jazz_Clean:.3,.6,.5,.35,.4,.65 cab=1x12_Open_Back:.6,.2,0 s6=Room_Reverb:.4,.6,.1:.18" },
+            { "Guitar", "Blues Crunch",           "inst=Electric_Guitar tone=.6 charA=.4 charB=.3 s1=Overdrive:.5,.5,.55 amp=British_Crunch:.45,.5,.6,.55,.5,.55 cab=4x12_British:.35,.15,0 s6=Spring_Reverb:.45,.5,.4:.2" },
+            { "Guitar", "Classic Rock",           "inst=Electric_Guitar tone=.65 charA=.2 charB=.5 amp=British_Crunch:.75,.55,.65,.6,.55,.5 cab=4x12_British:.3,.12,0 s5=Delay:.3,.25,.5:.15 s6=Plate_Reverb:.4,.4,.1:.15" },
+            { "Guitar", "Hot Rod Lead",           "inst=Electric_Guitar tone=.6 charA=.1 charB=.6 vibrato=.15 s1=Overdrive:.3,.6,.6 amp=Hot_Rod_Lead:.7,.5,.6,.6,.6,.5 cab=4x12_Modern:.3,.15,0 s5=Delay:.45,.35,.5:.25 s6=Hall_Reverb:.5,.4,.2:.2" },
+            { "Guitar", "Metal Rhythm",           "inst=Electric_Guitar tone=.7 charA=.05 charB=.8 dec=1 rel=.06 s1=Noise_Gate:.4,.15 s2=Overdrive:.1,.7,.7 amp=Modern_Metal:.75,.6,.35,.6,.6,.5 cab=4x12_Modern:.3,.08,0" },
+            { "Guitar", "Djent Tight",            "inst=Electric_Guitar tone=.8 charA=0 charB=.9 dec=.8 rel=.05 s1=Noise_Gate:.5,.1 s2=Overdrive:.05,.8,.7 amp=Modern_Metal:.85,.55,.55,.65,.65,.5 cab=4x12_Modern:.25,.05,0" },
+            { "Guitar", "Fuzz Garage",            "inst=Electric_Guitar tone=.6 charA=.3 charB=.4 s1=Fuzz:.7,.4,.5,.2 amp=Clean_American:.35,.6,.5,.5,.5,.55 cab=Tweed_Combo:.4,.25,0" },
+            { "Guitar", "Surf Twang",             "inst=Electric_Guitar tone=.85 charA=.1 charB=.2 s3=Tremolo:.6,.4,.2 amp=Clean_American:.35,.45,.45,.7,.6,.45 cab=1x12_Open_Back:.25,.1,0 s6=Spring_Reverb:.8,.7,.8:.45" },
+            { "Guitar", "Shoegaze Wall",          "inst=Electric_Guitar tone=.6 charA=.3 charB=.4 s1=Fuzz:.6,.6,.5,0 s2=Chorus:.2,.8,.6:.5 amp=British_Crunch:.6,.5,.5,.5,.5,.5 cab=2x12_Blue:.4,.2,0 s5=Tape_Echo:.5,.55,.4,.4:.35 s6=Hall_Reverb:.9,.3,.3:.55" },
+            { "Guitar", "Ambient Swells",         "inst=Electric_Guitar tone=.55 charA=.3 atk=.7 rel=1.5 dec=3 amp=Clean_American:.3,.5,.5,.55,.5,.6 cab=2x12_Blue:.4,.2,0 s5=Delay:.6,.55,.5:.4 s6=Hall_Reverb:.9,.3,.3:.5" },
+            { "Guitar", "Chicken Pickin'",        "inst=Electric_Guitar tone=.9 charA=.05 charB=.3 dec=.7 s1=Compressor:.7,.1,.55 amp=Clean_American:.4,.5,.55,.7,.6,.6 cab=1x12_Open_Back:.25,.1,0 s5=Delay:.25,.15,.6:.18" },
+            { "Guitar", "Indie Jangle",           "inst=Electric_Guitar tone=.8 charA=.2 charB=.2 s1=Compressor:.4,.3,.5 s2=Chorus:.3,.4,.7:.4 amp=Clean_American:.3,.5,.5,.6,.55,.6 cab=2x12_Blue:.3,.2,0 s6=Plate_Reverb:.5,.4,.1:.2" },
+            { "Guitar", "Phaser Funk",            "inst=Electric_Guitar tone=.75 charA=.1 charB=.2 dec=.7 s1=Phaser:.35,.7,.4:.6 amp=Clean_American:.3,.5,.55,.6,.55,.6 cab=1x12_Open_Back:.3,.1,0" },
+            { "Guitar", "Lo-Fi Bedroom",          "inst=Electric_Guitar tone=.5 charA=.4 amp=Lo-Fi_Practice:.4,.5,.5,.5,.5,.55 cab=Vintage_Radio:.5,.3,0 s5=Lo-Fi_Tape:.5,.4,.6 s6=Room_Reverb:.4,.5,.1:.2" },
+            { "Guitar", "Tremolo Noir",           "inst=Electric_Guitar tone=.55 charA=.6 s3=Tremolo:.45,.7,.3 amp=Jazz_Clean:.35,.55,.5,.5,.5,.6 cab=Tweed_Combo:.45,.2,0 s6=Spring_Reverb:.6,.4,.5:.35" },
+            { "Guitar", "Stadium Lead",           "inst=Electric_Guitar tone=.65 charA=.15 charB=.6 vibrato=.2 s1=Distortion:.5,.6,.5 amp=Hot_Rod_Lead:.6,.55,.6,.55,.55,.5 cab=4x12_British:.3,.15,0 s4=Ping-Pong:.4,.4,.5:.3 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Guitar", "Octave Fuzz Lead",       "inst=Electric_Guitar tone=.7 charA=.2 charB=.7 s1=Fuzz:.85,.7,.5,.1 amp=British_Crunch:.5,.5,.6,.5,.5,.5 cab=4x12_British:.3,.15,0 s6=Plate_Reverb:.5,.3,.1:.25" },
+            { "Guitar", "Rotary Guitar",          "inst=Electric_Guitar tone=.6 charA=.4 s2=Rotary_Speaker:.6,.2,.5 amp=Clean_American:.35,.5,.5,.5,.5,.6 cab=1x12_Open_Back:.4,.2,0" },
+
+            // ---------------- Bass
+            { "Bass", "Precision Finger",         "inst=Bass_Guitar tone=.45 charA=.25 charB=.6 dec=1.5 s4=Compressor:.4,.3,.5" },
+            { "Bass", "Jazz Bass Growl",          "inst=Bass_Guitar tone=.65 charA=.45 charB=.4 amp=Bass_Modern:.35,.55,.6,.55,.5,.6 cab=4x10_Bass:.35,.1,0" },
+            { "Bass", "Pick Rock Bass",           "inst=Bass_Guitar tone=.75 charA=.9 charB=.5 s1=Compressor:.5,.2,.5 amp=Bass_Tube:.5,.55,.55,.6,.5,.55 cab=8x10_Bass:.35,.1,0" },
+            { "Bass", "Motown Thump",             "inst=Bass_Guitar tone=.3 charA=.1 charB=.9 dec=.6 rel=.1 amp=Bass_Tube:.3,.6,.45,.35,.4,.6 cab=1x15_Bass:.5,.15,0" },
+            { "Bass", "Slap Funk",                "inst=Bass_Guitar tone=.95 charA=1 charB=.5 dec=1 s1=Compressor:.7,.1,.55 s4=3-Band_EQ:.6,.35,.7,.4" },
+            { "Bass", "Fretless Mwah",            "inst=Bass_Guitar tone=.55 charA=.3 charB=.5 dec=2.5 s2=Chorus:.2,.4,.6:.3 s6=Room_Reverb:.3,.5,.1:.1" },
+            { "Bass", "Fuzz Bass",                "inst=Bass_Guitar tone=.6 charA=.6 s1=Fuzz:.6,.4,.5,.1:.7 amp=Bass_Tube:.6,.6,.5,.5,.5,.5 cab=8x10_Bass:.35,.1,0" },
+            { "Bass", "Dub Bass",                 "inst=Bass_Guitar tone=.2 charA=.1 charB=1 dec=2 cutoff=700 s4=3-Band_EQ:.7,.4,.3,.3" },
+            { "Bass", "Upright Jazz",             "inst=Bass_Guitar tone=.35 charA=.15 charB=.8 dec=.9 s6=Room_Reverb:.3,.5,.05:.12" },
+            { "Bass", "Metal Bass",               "inst=Bass_Guitar tone=.8 charA=.95 charB=.4 s1=Distortion:.45,.6,.5:.5 amp=Bass_Modern:.5,.6,.5,.6,.6,.55 cab=4x10_Bass:.3,.05,0" },
+            { "Bass", "Chorus Bass",              "inst=Bass_Guitar tone=.6 charA=.5 s1=Compressor:.4,.3,.5 s2=Chorus:.3,.5,.6:.5" },
+            { "Bass", "Envelope Funk Bass",       "inst=Bass_Guitar tone=.7 charA=.6 dec=.8 s1=Auto-Wah:.7,.7,.75 s2=Compressor:.5,.2,.5" },
+            { "Bass", "Vintage Tube Bass",        "inst=Bass_Guitar tone=.5 charA=.4 charB=.6 amp=Bass_Tube:.65,.6,.5,.45,.45,.5 cab=8x10_Bass:.4,.1,0" },
+            { "Bass", "Muted Pick",               "inst=Bass_Guitar tone=.6 charA=.9 charB=.4 dec=.3 rel=.05 s1=Compressor:.5,.2,.5" },
+
+            // ---------------- Keys
+            { "Keys", "Concert Grand",            "inst=Grand_Piano tone=.6 charA=.5 charB=.4 rel=.4 s6=Hall_Reverb:.6,.4,.2:.22" },
+            { "Keys", "Bright Pop Piano",         "instVol=-4 inst=Grand_Piano tone=.85 charA=.75 charB=.3 s4=Compressor:.35,.3,.5 s6=Plate_Reverb:.45,.3,.1:.18" },
+            { "Keys", "Soft Felt Piano",          "inst=Grand_Piano tone=.2 charA=.1 charB=.5 rel=.6 s4=3-Band_EQ:.55,.5,.35,.6 s6=Room_Reverb:.55,.6,.1:.3" },
+            { "Keys", "Honky Tonk",               "inst=Grand_Piano tone=.7 charA=.6 charB=1 s6=Room_Reverb:.35,.5,.05:.15" },
+            { "Keys", "Lo-Fi Piano",              "inst=Grand_Piano tone=.4 charA=.3 s5=Lo-Fi_Tape:.45,.35,.6 s6=Room_Reverb:.4,.6,.1:.2" },
+            { "Keys", "Ballad Piano",             "inst=Grand_Piano tone=.5 charA=.4 dec=2.2 s6=Hall_Reverb:.75,.4,.25:.3" },
+            { "Keys", "Cinematic Piano",          "inst=Grand_Piano tone=.45 charA=.35 s5=Delay:.55,.35,.4:.15 s6=Hall_Reverb:.9,.35,.3:.4" },
+            { "Keys", "Upright Piano",            "inst=Grand_Piano tone=.55 charA=.55 charB=.7 dec=1 s6=Room_Reverb:.3,.5,.05:.15" },
+            { "Keys", "Rock Piano",               "instVol=-4 inst=Grand_Piano tone=.8 charA=.8 charB=.4 s4=Compressor:.5,.2,.55 s6=Room_Reverb:.3,.4,.05:.12" },
+            { "Keys", "Classic Tine EP",          "inst=Electric_Piano tone=.55 charA=.5 charB=.3 s4=Tremolo:.35,.35,.1 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Keys", "80s Bell EP",              "inst=Electric_Piano tone=.8 charA=.95 charB=.1 s4=Chorus:.3,.5,.7:.4 s6=Hall_Reverb:.6,.4,.2:.25" },
+            { "Keys", "Barky Stage EP",           "inst=Electric_Piano tone=.6 charA=.5 charB=.9 amp=Keys_Hi-Fi:.5,.5,.5,.5,.5,.6 cab=Full-Range_Keys:.4,.15,0" },
+            { "Keys", "Neo Soul Keys",            "inst=Electric_Piano tone=.45 charA=.4 charB=.4 s4=Chorus:.2,.3,.6:.3 s6=Room_Reverb:.45,.5,.1:.18" },
+            { "Keys", "Lo-Fi Keys",               "inst=Electric_Piano tone=.35 charA=.35 charB=.3 s5=Lo-Fi_Tape:.5,.4,.6 s6=Room_Reverb:.4,.6,.1:.25" },
+            { "Keys", "Phaser EP",                "inst=Electric_Piano tone=.55 charA=.55 charB=.4 s2=Phaser:.25,.6,.3:.5 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Keys", "Gritty Reed EP",           "inst=Electric_Piano tone=.7 charA=.3 charB=.8 amp=Clean_American:.45,.5,.6,.5,.5,.6 cab=Tweed_Combo:.4,.2,0" },
+            { "Keys", "Dreamy EP",                "inst=Electric_Piano tone=.5 charA=.6 charB=.2 s4=Chorus:.25,.5,.6:.4 s5=Ping-Pong:.45,.4,.5:.25 s6=Hall_Reverb:.8,.4,.2:.35" },
+
+            // ---------------- Organ
+            { "Organ", "Jazz Organ",              "inst=Organ tone=.5 charA=.25 charB=.6 atk=.003 sus=1 rel=.04 s4=Rotary_Speaker:0,.2,.5" },
+            { "Organ", "Gospel Organ",            "inst=Organ tone=.6 charA=.5 charB=.4 atk=.003 sus=1 rel=.05 s4=Rotary_Speaker:0,.3,.5 s6=Room_Reverb:.4,.5,.05:.15" },
+            { "Organ", "Rock Organ",              "instVol=-4 inst=Organ tone=.7 charA=.75 charB=.3 atk=.003 sus=1 rel=.04 s4=Rotary_Speaker:1,.6,.5 s6=Room_Reverb:.35,.5,.05:.12" },
+            { "Organ", "Full Drawbars",           "inst=Organ tone=.8 charA=1 charB=.2 atk=.003 sus=1 rel=.04 s4=Rotary_Speaker:0,.3,.5" },
+            { "Organ", "Church Organ",            "inst=Organ tone=.6 charA=.9 charB=0 atk=.08 sus=1 rel=.8 s6=Hall_Reverb:.95,.4,.3:.45" },
+            { "Organ", "Mellow Flutes",           "inst=Organ tone=.3 charA=0 charB=.2 atk=.005 sus=1 rel=.06 s4=Rotary_Speaker:0,.1,.4" },
+            { "Organ", "Fast Leslie Lead",        "inst=Organ tone=.7 charA=.6 charB=.7 atk=.003 sus=1 rel=.04 s4=Rotary_Speaker:1,.4,.6" },
+            { "Organ", "Reggae Bubble",           "inst=Organ tone=.5 charA=.3 charB=.1 atk=.002 dec=.12 sus=0 rel=.05 s6=Room_Reverb:.3,.5,.05:.1" },
+            { "Organ", "Overdriven B3",           "instVol=-4 inst=Organ tone=.65 charA=.7 charB=.5 atk=.003 sus=1 rel=.04 s1=Overdrive:.55,.5,.5 s4=Rotary_Speaker:0,.5,.5" },
+
+            // ---------------- Synth Lead
+            { "Synth Lead", "Classic Saw Lead",   "inst=Synth wave=Saw detune=.25 cutoff=4000 reso=.25 fenv=.2 sus=.9 rel=.2 vibrato=.15 s5=Delay:.4,.35,.5:.2 s6=Hall_Reverb:.6,.4,.2:.2" },
+            { "Synth Lead", "Square Lead",        "inst=Synth wave=Square detune=.15 cutoff=3000 sus=1 rel=.15 vibrato=.2 s5=Delay:.35,.3,.5:.2" },
+            { "Synth Lead", "Supersaw Anthem",    "inst=Synth wave=Supersaw detune=.5 cutoff=9000 sus=1 rel=.4 s4=Compressor:.4,.3,.5 s5=Ping-Pong:.35,.35,.6:.2 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Synth Lead", "Screamer",           "inst=Synth wave=Saw charA=.8 detune=.2 cutoff=5000 reso=.4 vibrato=.25 sus=1 rel=.2 s1=Distortion:.3,.6,.5:.4 s5=Delay:.4,.4,.5:.2" },
+            { "Synth Lead", "Chiptune Pulse",     "inst=Synth wave=Pulse charA=.7 detune=0 sus=1 rel=.05 s1=Bit_Crusher:.6,.15,.8" },
+            { "Synth Lead", "Soft Sine Lead",     "inst=Synth wave=Sine detune=.1 atk=.03 sus=1 rel=.3 vibrato=.2 s5=Delay:.45,.4,.5:.25 s6=Hall_Reverb:.6,.4,.2:.25" },
+            { "Synth Lead", "Synthwave Lead",     "inst=Synth wave=Saw detune=.4 cutoff=3500 sus=.9 rel=.3 vibrato=.1 s4=Chorus:.3,.5,.7:.35 s5=Delay:.45,.4,.5:.25 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Synth Lead", "Brassy Lead",        "inst=Synth wave=Saw detune=.2 cutoff=1500 fenv=.5 dec=.4 sus=.7 rel=.2" },
+            { "Synth Lead", "Pluck Lead",         "inst=Synth wave=Saw cutoff=900 reso=.3 fenv=.7 dec=.25 sus=0 rel=.2 s5=Ping-Pong:.35,.35,.6:.25" },
+            { "Synth Lead", "Arp Pluck",          "inst=Synth wave=Square cutoff=1200 fenv=.6 dec=.15 sus=0 rel=.1 s5=Delay:.3,.4,.6:.25" },
+            { "Synth Lead", "Trance Pluck",       "inst=Synth wave=Supersaw cutoff=1500 fenv=.6 dec=.3 sus=0 rel=.3 s5=Ping-Pong:.3,.4,.6:.25 s6=Hall_Reverb:.7,.4,.2:.25" },
+            { "Synth Lead", "Poly Brass Synth",   "inst=Synth wave=Saw detune=.3 cutoff=1800 fenv=.35 atk=.03 sus=.8 rel=.2 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Synth Lead", "80s Poly",           "inst=Synth wave=Saw detune=.35 cutoff=2500 sus=.8 rel=.4 s4=Chorus:.3,.6,.7:.5 s6=Hall_Reverb:.6,.4,.2:.25" },
+            { "Synth Lead", "Wide Detuned Keys",  "inst=Synth wave=Saw detune=.6 width=.9 cutoff=6000 dec=.6 sus=.4 rel=.3 s6=Plate_Reverb:.5,.3,.1:.2" },
+            { "Synth Lead", "Wah Lead",           "instVol=-4 inst=Synth wave=Saw detune=.2 sus=1 rel=.2 s1=Auto-Wah:.6,.7,.7 s5=Delay:.4,.3,.5:.2" },
+            { "Synth Lead", "Amped Synth Lead",   "inst=Synth wave=Square detune=.2 sus=1 rel=.2 vibrato=.2 s1=Overdrive:.7,.6,.5 amp=British_Crunch:.6,.5,.6,.55,.5,.5 cab=4x12_British:.3,.15,0 s6=Hall_Reverb:.6,.4,.2:.2" },
+
+            // ---------------- Synth Bass
+            { "Synth Bass", "Classic Moog-ish",   "inst=Synth_Bass wave=Saw charA=.2 charB=.3 cutoff=500 reso=.35 fenv=.45 dec=.35 sus=.5 rel=.08" },
+            { "Synth Bass", "808 Sub",            "inst=Synth_Bass wave=Sine charA=.3 charB=.5 dec=2 sus=.4 rel=.2" },
+            { "Synth Bass", "Reese",              "inst=Synth_Bass wave=Supersaw detune=.35 cutoff=900 reso=.2 sus=1 rel=.15 s3=Distortion:.2,.5,.5:.4" },
+            { "Synth Bass", "Acid Line",          "inst=Synth_Bass wave=Saw cutoff=350 reso=.85 fenv=.7 dec=.25 sus=.1 rel=.05 s1=Distortion:.35,.6,.5:.6 s4=Delay:.3,.3,.5:.15" },
+            { "Synth Bass", "Square Pluck Bass",  "inst=Synth_Bass wave=Square cutoff=800 reso=.3 fenv=.5 dec=.2 sus=.3 rel=.06" },
+            { "Synth Bass", "Wobble",             "inst=Synth_Bass wave=Saw charB=.5 cutoff=600 reso=.6 sus=1 rel=.1 s2=Auto_Filter:.45,.8,.35,.6 s3=Distortion:.3,.6,.5:.5" },
+            { "Synth Bass", "Deep House",         "inst=Synth_Bass wave=Pulse charA=.4 cutoff=700 fenv=.3 dec=.3 sus=.6 rel=.08" },
+            { "Synth Bass", "Growl",              "inst=Synth_Bass wave=Saw charA=.8 cutoff=1200 reso=.5 sus=1 rel=.1 s2=Auto_Filter:.6,.6,.4,.6 s3=Bit_Crusher:.3,.2,.7:.3" },
+            { "Synth Bass", "Funky Synth Bass",   "inst=Synth_Bass wave=Square cutoff=600 reso=.55 fenv=.6 dec=.18 sus=.2 rel=.05" },
+            { "Synth Bass", "Pluck Sub",          "inst=Synth_Bass wave=Triangle charB=.6 dec=.4 sus=.2 rel=.1" },
+            { "Synth Bass", "Analog Fat",         "inst=Synth_Bass wave=Saw charB=.7 cutoff=900 fenv=.25 dec=.5 sus=.7 rel=.1" },
+            { "Synth Bass", "Trap 808 Grit",      "inst=Synth_Bass wave=Sine charA=.5 charB=.3 dec=3 sus=.6 rel=.3 s1=Distortion:.25,.4,.5:.35" },
+            { "Synth Bass", "Synthwave Bass",     "inst=Synth_Bass wave=Saw cutoff=1100 fenv=.3 dec=.25 sus=.4 rel=.08 s4=Chorus:.2,.3,.6:.2" },
+            { "Synth Bass", "Rubber Bass",        "inst=Synth_Bass wave=Square cutoff=400 reso=.6 fenv=.55 dec=.12 sus=.25 rel=.05" },
+
+            // ---------------- Pads
+            { "Pads", "Warm Analog Pad",          "inst=Pad wave=Saw detune=.3 cutoff=1500 charA=.1 charB=.3 atk=.8 sus=1 rel=1.5 s6=Hall_Reverb:.7,.4,.2:.35" },
+            { "Pads", "Supersaw Pad",             "inst=Pad wave=Supersaw detune=.4 cutoff=4000 charA=.2 charB=.2 atk=.6 sus=1 rel=1.5 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Pads", "Glass Pad",                "inst=Pad wave=Triangle charA=.6 charB=.2 cutoff=6000 atk=.5 sus=1 rel=1.8 s4=Chorus:.25,.5,.7:.4 s6=Hall_Reverb:.8,.3,.2:.4" },
+            { "Pads", "Dark Drone",               "inst=Pad wave=Saw cutoff=400 reso=.3 charB=.7 atk=2 sus=1 rel=3 octave=-1 s6=Hall_Reverb:.9,.5,.3:.5" },
+            { "Pads", "Shimmer Pad",              "inst=Pad wave=Saw charA=.8 charB=.3 cutoff=7000 atk=.9 sus=1 rel=2 s5=Ping-Pong:.5,.5,.6:.3 s6=Hall_Reverb:.9,.3,.3:.5" },
+            { "Pads", "Breathing Pad",            "inst=Pad wave=Saw charB=.9 cutoff=1200 reso=.3 atk=1 sus=1 rel=2 s6=Hall_Reverb:.8,.4,.2:.35" },
+            { "Pads", "Airy Choir",               "inst=Pad wave=Triangle charA=.3 cutoff=2500 vibrato=.1 atk=.7 sus=1 rel=1.8 s4=Chorus:.2,.6,.6:.5 s6=Hall_Reverb:.85,.4,.25:.4" },
+            { "Pads", "Ambient Wash",             "inst=Pad wave=Supersaw atk=2.5 sus=1 rel=4 cutoff=2500 s5=Tape_Echo:.5,.5,.3,.3:.3 s6=Hall_Reverb:.95,.3,.3:.6" },
+            { "Pads", "Lo-Fi Pad",                "inst=Pad wave=Square cutoff=1800 atk=.6 sus=1 rel=1.5 s5=Lo-Fi_Tape:.6,.4,.7 s6=Room_Reverb:.6,.5,.1:.3" },
+            { "Pads", "Filter Sweep Pad",         "inst=Pad wave=Saw detune=.3 cutoff=400 fenv=.6 atk=1.2 dec=4 sus=.4 rel=2 s6=Hall_Reverb:.8,.4,.2:.35" },
+            { "Pads", "Square Pad",               "inst=Pad wave=Square detune=.25 cutoff=3000 atk=.5 sus=1 rel=1.5 s6=Plate_Reverb:.7,.3,.1:.3" },
+            { "Pads", "Sine Pad",                 "inst=Pad wave=Sine charA=.5 atk=.8 sus=1 rel=2 s6=Hall_Reverb:.8,.3,.2:.35" },
+            { "Pads", "80s String Machine",       "inst=Pad wave=Saw detune=.5 cutoff=5000 atk=.4 sus=1 rel=1.2 s4=Chorus:.4,.7,.6:.5 s6=Hall_Reverb:.6,.4,.2:.25" },
+            { "Pads", "Cinematic Swell",          "inst=Pad wave=Supersaw cutoff=3000 atk=3 sus=1 rel=4 s6=Hall_Reverb:.95,.4,.3:.5" },
+            { "Pads", "Phase Pad",                "inst=Pad wave=Saw detune=.3 cutoff=3000 atk=.8 sus=1 rel=2 s3=Phaser:.1,.8,.5:.6 s6=Hall_Reverb:.8,.4,.2:.35" },
+            { "Pads", "Gated Pad",                "inst=Pad wave=Supersaw cutoff=5000 atk=.1 sus=1 rel=.5 s3=Tremolo:.7,1,1 s6=Plate_Reverb:.5,.3,.1:.2" },
+
+            // ---------------- Strings & Brass
+            { "Strings & Brass", "String Ensemble",  "inst=Strings tone=.6 charA=.5 charB=.2 atk=.25 sus=1 rel=.6 cutoff=6000 s6=Hall_Reverb:.75,.4,.2:.3" },
+            { "Strings & Brass", "Solo Violin",      "inst=Strings tone=.65 charA=.1 charB=.5 vibrato=.3 atk=.1 sus=1 rel=.3 cutoff=5000 s6=Hall_Reverb:.7,.4,.2:.28" },
+            { "Strings & Brass", "Cello Section",    "inst=Strings tone=.4 charA=.4 charB=.3 octave=-1 atk=.2 sus=1 rel=.5 cutoff=3000 s6=Hall_Reverb:.75,.45,.2:.3" },
+            { "Strings & Brass", "Pizzicato",        "inst=Strings tone=.5 charA=.3 atk=.002 dec=.25 sus=0 rel=.2 cutoff=3000 s6=Hall_Reverb:.6,.4,.15:.25" },
+            { "Strings & Brass", "Staccato Strings", "inst=Strings tone=.55 charA=.4 charB=.4 atk=.01 dec=.2 sus=.2 rel=.15 cutoff=5000 s6=Hall_Reverb:.6,.4,.15:.25" },
+            { "Strings & Brass", "Lush Strings",     "inst=Strings tone=.6 charA=.9 charB=.15 atk=.4 sus=1 rel=1 cutoff=7000 s4=Chorus:.2,.4,.7:.3 s6=Hall_Reverb:.9,.35,.25:.45" },
+            { "Strings & Brass", "Tremolo Strings",  "inst=Strings tone=.6 charA=.5 charB=.4 atk=.15 sus=1 rel=.5 cutoff=5000 s3=Tremolo:.8,.6,.3 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Strings & Brass", "Brass Section",    "inst=Brass wave=Saw tone=.5 charA=.5 charB=.2 atk=.04 sus=.8 rel=.15 s6=Hall_Reverb:.6,.4,.15:.2" },
+            { "Strings & Brass", "Bright Trumpet",   "inst=Brass wave=Saw tone=.75 charA=.7 charB=.3 vibrato=.15 atk=.03 sus=.85 rel=.12 s6=Room_Reverb:.5,.4,.1:.2" },
+            { "Strings & Brass", "Horn Stabs",       "inst=Brass wave=Saw tone=.6 charA=.8 atk=.01 dec=.25 sus=.2 rel=.1 s6=Plate_Reverb:.5,.3,.1:.18" },
+            { "Strings & Brass", "French Horn",      "inst=Brass wave=Triangle tone=.3 charA=.3 charB=.1 atk=.1 sus=.9 rel=.3 s6=Hall_Reverb:.75,.45,.2:.3" },
+            { "Strings & Brass", "Synth Brass",      "inst=Brass wave=Saw detune=.4 tone=.6 charA=.9 atk=.02 sus=.8 rel=.2 s4=Chorus:.25,.5,.7:.35 s6=Room_Reverb:.5,.4,.1:.18" },
+            { "Strings & Brass", "Low Trombones",    "inst=Brass wave=Saw tone=.45 charA=.6 charB=.2 octave=-1 atk=.05 sus=.85 rel=.15 s6=Hall_Reverb:.6,.45,.15:.22" },
+            { "Strings & Brass", "Sax-ish Lead",     "inst=Brass wave=Square tone=.6 charA=.5 charB=.5 vibrato=.2 atk=.03 sus=.9 rel=.12 s1=Overdrive:.3,.5,.5 s6=Room_Reverb:.4,.5,.1:.18" },
+
+            // ---------------- Bells & Mallets
+            { "Bells & Mallets", "Music Box",        "inst=Bell charA=.33 charB=.3 tone=.3 dec=1.2 s6=Hall_Reverb:.6,.4,.2:.3" },
+            { "Bells & Mallets", "Tubular Bells",    "inst=Bell charA=.5 charB=.3 tone=.5 dec=4 s6=Hall_Reverb:.8,.4,.25:.35" },
+            { "Bells & Mallets", "Glass Bell",       "inst=Bell charA=.83 charB=.6 tone=.4 dec=2.5 s6=Hall_Reverb:.8,.3,.25:.35" },
+            { "Bells & Mallets", "DX Pluck",         "inst=Bell charA=.33 charB=.2 tone=.6 dec=.5 s5=Delay:.3,.3,.6:.2" },
+            { "Bells & Mallets", "Kalimba",          "inst=Bell charA=.67 charB=0 tone=.25 dec=.6 s6=Room_Reverb:.4,.4,.1:.2" },
+            { "Bells & Mallets", "Celesta",          "inst=Bell charA=.33 charB=.5 tone=.2 dec=1.4 s6=Hall_Reverb:.7,.4,.2:.3" },
+            { "Bells & Mallets", "Metallic Hit",     "inst=Bell charA=1 charB=.4 tone=.9 dec=1 s6=Plate_Reverb:.6,.3,.1:.25" },
+            { "Bells & Mallets", "Marimba",          "inst=Mallets charA=0 charB=.5 tone=.5 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Bells & Mallets", "Vibraphone",       "inst=Mallets charA=.5 charB=.6 tone=.45 s4=Tremolo:.35,.4,0 s6=Room_Reverb:.5,.5,.1:.2" },
+            { "Bells & Mallets", "Glockenspiel",     "inst=Mallets charA=1 charB=.4 tone=.6 s6=Hall_Reverb:.6,.4,.2:.25" },
+            { "Bells & Mallets", "Xylophone",        "inst=Mallets charA=.15 charB=.1 tone=.8 dec=.8 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Bells & Mallets", "Steel Drum",       "inst=Bell charA=.4 charB=.2 tone=.35 dec=.9 s6=Room_Reverb:.45,.4,.1:.2" },
+            { "Bells & Mallets", "Wind Chimes",      "inst=Bell charA=.9 charB=.5 tone=.3 dec=5 s6=Hall_Reverb:.9,.3,.3:.5" },
+            { "Bells & Mallets", "Soft Mallet Pad",  "inst=Mallets charA=.45 charB=1 tone=.2 dec=4 s5=Delay:.5,.4,.4:.2 s6=Hall_Reverb:.85,.4,.25:.4" },
+
+            // ---------------- Wind
+            { "Wind", "Concert Flute",            "inst=Flute_/_Wind charA=.35 charB=.2 tone=.3 atk=.06 sus=1 rel=.15 vibrato=.2 s6=Hall_Reverb:.7,.4,.2:.25" },
+            { "Wind", "Pan Flute",                "inst=Flute_/_Wind charA=.7 charB=.1 tone=.2 atk=.08 sus=1 rel=.2 s6=Hall_Reverb:.8,.4,.25:.35" },
+            { "Wind", "Breathy Whistle",          "inst=Flute_/_Wind charA=.5 charB=0 tone=.1 octave=1 atk=.04 sus=1 rel=.1 vibrato=.25 s6=Room_Reverb:.5,.4,.1:.2" },
+            { "Wind", "Ocarina",                  "inst=Flute_/_Wind charA=.2 charB=.05 tone=0 atk=.05 sus=1 rel=.12 s6=Room_Reverb:.5,.5,.1:.25" },
+            { "Wind", "Recorder",                 "inst=Flute_/_Wind charA=.25 charB=.5 tone=.2 atk=.03 sus=1 rel=.08 s6=Room_Reverb:.4,.5,.1:.18" },
+            { "Wind", "Overblown Lead",           "inst=Flute_/_Wind charA=.4 charB=1 tone=.6 atk=.03 sus=1 rel=.1 vibrato=.3 s1=Overdrive:.2,.6,.5 s5=Delay:.4,.35,.5:.2" },
+
+            // ---------------- Drums
+            { "Drums", "Studio Kit",              "inst=Drum_Kit kit=Studio_Kit tone=.6 s4=Compressor:.4,.3,.5 s6=Room_Reverb:.35,.5,.05:.15" },
+            { "Drums", "Rock Kit Big Room",       "inst=Drum_Kit kit=Rock_Kit tone=.65 charB=.6 s4=Compressor:.6,.3,.55 s6=Room_Reverb:.6,.4,.05:.3" },
+            { "Drums", "808 Trap",                "inst=Drum_Kit kit=808 tone=.6 charB=.5 dec=2 s4=Compressor:.3,.3,.5" },
+            { "Drums", "808 Classic",             "inst=Drum_Kit kit=808 tone=.5 dec=1.5" },
+            { "Drums", "909 House",               "inst=Drum_Kit kit=909 tone=.6 s4=Compressor:.4,.3,.5" },
+            { "Drums", "909 Techno",              "inst=Drum_Kit kit=909 tone=.8 charA=.45 s1=Distortion:.2,.6,.5:.3 s4=Compressor:.5,.3,.5" },
+            { "Drums", "Lo-Fi Hip Hop Kit",       "inst=Drum_Kit kit=Lo-Fi_Kit tone=.4 s5=Lo-Fi_Tape:.3,.4,.6 s6=Room_Reverb:.3,.6,.05:.15" },
+            { "Drums", "Electro Kit",             "inst=Drum_Kit kit=Electro_Kit tone=.7" },
+            { "Drums", "Boom Bap",                "inst=Drum_Kit kit=Studio_Kit tone=.45 charA=.4 s1=Compressor:.6,.4,.55 s5=Lo-Fi_Tape:.1,.15,.5:.6" },
+            { "Drums", "Tight Funk Kit",          "inst=Drum_Kit kit=Studio_Kit tone=.7 dec=.9 s4=Compressor:.5,.2,.5" },
+            { "Drums", "Stadium Drums",           "inst=Drum_Kit kit=Rock_Kit tone=.6 charB=.7 s4=Compressor:.6,.3,.55 s6=Hall_Reverb:.7,.4,.1:.25" },
+            { "Drums", "Garage Kit",              "inst=Drum_Kit kit=Rock_Kit tone=.6 s1=Overdrive:.4,.6,.5:.5 s6=Room_Reverb:.4,.5,.05:.2" },
+            { "Drums", "Tuned Low Kit",           "inst=Drum_Kit kit=Studio_Kit tone=.5 charA=.3 s4=Compressor:.4,.3,.5" },
+            { "Drums", "Tuned High Kit",          "inst=Drum_Kit kit=Studio_Kit tone=.65 charA=.75 s4=Compressor:.4,.3,.5" },
+            { "Drums", "Crushed Beats",           "inst=Drum_Kit kit=909 tone=.6 s1=Bit_Crusher:.55,.25,.7" },
+            { "Drums", "Dub Drums",               "inst=Drum_Kit kit=Studio_Kit tone=.5 s5=Tape_Echo:.45,.5,.4,.4:.25 s6=Spring_Reverb:.6,.5,.5:.3" },
+            { "Drums", "Minimal Clicks",          "inst=Drum_Kit kit=Electro_Kit tone=.9 dec=.6" },
+            { "Drums", "Vinyl Breaks",            "inst=Drum_Kit kit=Lo-Fi_Kit tone=.5 s4=Compressor:.6,.3,.55 s5=Lo-Fi_Tape:.4,.6,.7" },
+
+            // ---------------- FX & Textures
+            { "FX & Textures", "Sparkle Delay Bells", "inst=Bell charA=.83 charB=.5 tone=.7 dec=1 s5=Ping-Pong:.25,.6,.7:.5 s6=Hall_Reverb:.9,.3,.3:.6" },
+            { "FX & Textures", "Sci-Fi Sweep",        "inst=Synth wave=Saw detune=.3 sus=1 rel=.5 s2=Auto_Filter:.2,.9,.4,.8 s3=Phaser:.2,.8,.6:.5 s6=Hall_Reverb:.8,.4,.2:.35" },
+            { "FX & Textures", "Underwater Keys",     "inst=Electric_Piano charA=.5 tone=.5 s2=Auto_Filter:.15,.6,.2,.6 s4=Chorus:.3,.7,.5:.5 s6=Hall_Reverb:.8,.5,.2:.4" },
+            { "FX & Textures", "Radio Ghost Piano",   "inst=Grand_Piano tone=.5 amp=Lo-Fi_Practice:.3,.5,.5,.5,.5,.6 cab=Vintage_Radio:.5,.3,0 s5=Lo-Fi_Tape:.6,.5,.7 s6=Spring_Reverb:.6,.5,.5:.3" },
+            { "FX & Textures", "Space Echo Guitar",   "inst=Electric_Guitar tone=.6 charA=.3 amp=Clean_American:.35,.5,.5,.55,.5,.6 cab=2x12_Blue:.35,.2,0 s5=Tape_Echo:.5,.7,.5,.4:.45 s6=Spring_Reverb:.6,.5,.5:.3" },
+            { "FX & Textures", "8-Bit Arcade",        "inst=Synth wave=Pulse charA=.5 detune=0 sus=.8 rel=.05 s1=Bit_Crusher:.7,.3,.9" },
+            { "FX & Textures", "Broken Music Box",    "inst=Bell charA=.33 charB=.3 tone=.3 dec=1.5 s5=Lo-Fi_Tape:.9,.4,.7 s6=Hall_Reverb:.7,.4,.2:.35" },
+            { "FX & Textures", "Rotary Synth",        "instVol=-4 inst=Synth wave=Square detune=.2 sus=1 rel=.2 s4=Rotary_Speaker:1,.3,.5" },
+            { "FX & Textures", "Frozen Strings",      "inst=Strings charA=.8 charB=.2 atk=1.5 sus=1 rel=3 s5=Tape_Echo:.6,.6,.2,.3:.3 s6=Hall_Reverb:1,.3,.4:.7" },
+            { "FX & Textures", "Haunted Organ",       "inst=Organ charA=.9 charB=0 tone=.4 atk=.1 sus=1 rel=1 vibrato=.4 s3=Flanger:.1,.7,.6,.4:.5 s6=Hall_Reverb:.95,.4,.3:.5" },
+
+            // ---------------- Live Guitar (plug a guitar in: Live Input mode)
+            { "Live Guitar", "Clean Amp",            "s1=Compressor:.3,.3,.5 amp=Clean_American:.3,.5,.5,.55,.5,.6 cab=2x12_Blue:.35,.15,0 s6=Spring_Reverb:.4,.5,.4:.2" },
+            { "Live Guitar", "Sparkle Clean",        "s1=Compressor:.4,.3,.5 amp=Clean_American:.3,.45,.5,.7,.6,.6 cab=2x12_Blue:.3,.15,0 s4=Chorus:.3,.4,.7:.3 s6=Plate_Reverb:.5,.3,.1:.22" },
+            { "Live Guitar", "Jazz Clean",           "amp=Jazz_Clean:.3,.6,.5,.35,.4,.65 cab=1x12_Open_Back:.6,.2,0 s6=Room_Reverb:.4,.6,.1:.18" },
+            { "Live Guitar", "Edge of Breakup",      "amp=British_Crunch:.3,.5,.55,.55,.5,.6 cab=2x12_Blue:.35,.15,0 s6=Room_Reverb:.4,.5,.1:.15" },
+            { "Live Guitar", "Blues Overdrive",      "s1=Overdrive:.55,.5,.55 amp=British_Crunch:.4,.5,.6,.55,.5,.55 cab=4x12_British:.35,.15,0 s6=Spring_Reverb:.45,.5,.4:.2" },
+            { "Live Guitar", "Classic Rock Crunch",  "amp=British_Crunch:.7,.55,.65,.6,.55,.5 cab=4x12_British:.3,.12,0 s5=Delay:.3,.25,.5:.12 s6=Plate_Reverb:.4,.4,.1:.15" },
+            { "Live Guitar", "80s Hair Lead",        "s1=Overdrive:.3,.6,.6 amp=Hot_Rod_Lead:.75,.55,.6,.6,.6,.5 cab=4x12_British:.3,.15,0 s4=Chorus:.3,.4,.7:.25 s5=Delay:.45,.35,.5:.25 s6=Hall_Reverb:.6,.4,.2:.2" },
+            { "Live Guitar", "Modern Metal",         "s1=Noise_Gate:.45,.15 s2=Overdrive:.1,.7,.7 amp=Modern_Metal:.75,.6,.35,.6,.6,.5 cab=4x12_Modern:.3,.08,0" },
+            { "Live Guitar", "Djent",                "s1=Noise_Gate:.5,.1 s2=Overdrive:.05,.8,.7 amp=Modern_Metal:.9,.55,.55,.65,.65,.5 cab=4x12_Modern:.25,.05,0" },
+            { "Live Guitar", "Thrash",               "s1=Noise_Gate:.45,.12 s2=Distortion:.5,.6,.5:.6 amp=Modern_Metal:.6,.6,.3,.65,.6,.5 cab=4x12_British:.3,.08,0" },
+            { "Live Guitar", "Doom Fuzz",            "s1=Fuzz:.9,.3,.5,.3 amp=British_Crunch:.5,.7,.5,.4,.4,.5 cab=4x12_British:.45,.2,0 s6=Room_Reverb:.6,.5,.1:.2" },
+            { "Live Guitar", "Grunge",               "s1=Distortion:.6,.5,.5 amp=British_Crunch:.5,.55,.45,.55,.5,.5 cab=4x12_British:.35,.15,0" },
+            { "Live Guitar", "Surf Reverb",          "s3=Tremolo:.6,.35,.2 amp=Clean_American:.35,.45,.45,.7,.6,.45 cab=1x12_Open_Back:.25,.1,0 s6=Spring_Reverb:.8,.7,.8:.45" },
+            { "Live Guitar", "Funk Wah",             "s1=Compressor:.6,.15,.55 s2=Auto-Wah:.6,.6,.7 amp=Clean_American:.25,.45,.55,.65,.6,.6 cab=1x12_Open_Back:.3,.1,0" },
+            { "Live Guitar", "Ambient Clean",        "s1=Compressor:.4,.3,.5 amp=Clean_American:.3,.5,.5,.55,.5,.6 cab=2x12_Blue:.4,.2,0 s5=Delay:.6,.55,.5:.4 s6=Hall_Reverb:.9,.3,.3:.5" },
+            { "Live Guitar", "Shoegaze",             "s1=Fuzz:.6,.6,.5,0 s2=Chorus:.2,.8,.6:.5 amp=British_Crunch:.6,.5,.5,.5,.5,.5 cab=2x12_Blue:.4,.2,0 s5=Tape_Echo:.5,.55,.4,.4:.35 s6=Hall_Reverb:.9,.3,.3:.55" },
+            { "Live Guitar", "Country Twang",        "s1=Compressor:.7,.1,.55 amp=Clean_American:.4,.5,.55,.7,.6,.6 cab=1x12_Open_Back:.25,.1,0 s5=Delay:.15,.1,.6:.2" },
+            { "Live Guitar", "Indie Chorus",         "s1=Compressor:.4,.3,.5 s2=Chorus:.3,.4,.7:.4 amp=Clean_American:.3,.5,.5,.6,.55,.6 cab=2x12_Blue:.3,.2,0 s6=Plate_Reverb:.5,.4,.1:.2" },
+            { "Live Guitar", "Lead Delay Solo",      "s1=Overdrive:.4,.6,.6 amp=Hot_Rod_Lead:.65,.5,.6,.6,.6,.5 cab=4x12_Modern:.3,.15,0 s5=Delay:.45,.4,.5:.28 s6=Hall_Reverb:.6,.4,.2:.22" },
+            { "Live Guitar", "Lo-Fi Bedroom",        "amp=Lo-Fi_Practice:.4,.5,.5,.5,.5,.55 cab=Vintage_Radio:.5,.3,0 s5=Lo-Fi_Tape:.5,.4,.6 s6=Room_Reverb:.4,.5,.1:.2" },
+            { "Live Guitar", "Rotary Guitar",        "s2=Rotary_Speaker:.6,.2,.5 amp=Clean_American:.35,.5,.5,.5,.5,.6 cab=1x12_Open_Back:.4,.2,0" },
+            { "Live Guitar", "70s Phaser Crunch",    "s1=Phaser:.3,.7,.4:.6 amp=British_Crunch:.45,.5,.55,.55,.5,.55 cab=4x12_British:.35,.15,0" },
+            { "Live Guitar", "Tremolo Noir",         "s3=Tremolo:.45,.7,.3 amp=Jazz_Clean:.35,.55,.5,.5,.5,.6 cab=Tweed_Combo:.45,.2,0 s6=Spring_Reverb:.6,.4,.5:.35" },
+            { "Live Guitar", "Fuzz Octave Lead",     "s1=Fuzz:.85,.7,.5,.1 amp=British_Crunch:.5,.5,.6,.5,.5,.5 cab=4x12_British:.3,.15,0 s6=Plate_Reverb:.5,.3,.1:.25" },
+            { "Live Guitar", "Tweed Crunch",         "amp=Lo-Fi_Practice:.5,.55,.5,.55,.5,.55 cab=Tweed_Combo:.4,.25,0 s6=Spring_Reverb:.5,.5,.4:.2" },
+            { "Live Guitar", "Acoustic DI Enhance",  "s1=Compressor:.4,.3,.5 s4=3-Band_EQ:.45,.4,.6,.6 s6=Room_Reverb:.5,.5,.1:.2" },
+            { "Live Guitar", "Acoustic Shimmer",     "s1=Compressor:.45,.3,.5 s4=3-Band_EQ:.45,.4,.65,.6 s5=Chorus:.25,.3,.8:.3 s6=Hall_Reverb:.7,.3,.2:.3" },
+            { "Live Guitar", "Clean Funk Comp",      "s1=Compressor:.7,.1,.55 amp=Clean_American:.25,.45,.55,.65,.6,.6 cab=1x12_Open_Back:.3,.1,0 s6=Room_Reverb:.3,.5,.05:.1" },
+
+            // ---------------- Live Bass
+            { "Live Bass", "Bass DI Clean",          "s1=Compressor:.45,.3,.5 amp=Bass_Modern:.2,.55,.5,.5,.5,.6 cab=4x10_Bass:.3,.05,0" },
+            { "Live Bass", "Vintage Tube Bass",      "s1=Compressor:.4,.3,.5 amp=Bass_Tube:.45,.6,.5,.45,.45,.55 cab=8x10_Bass:.4,.1,0" },
+            { "Live Bass", "Rock Pick Bass",         "s1=Compressor:.55,.2,.5 amp=Bass_Tube:.6,.55,.55,.6,.5,.5 cab=8x10_Bass:.35,.1,0" },
+            { "Live Bass", "Fuzz Bass",              "s1=Fuzz:.6,.4,.5,.1:.6 amp=Bass_Tube:.6,.6,.5,.5,.5,.5 cab=8x10_Bass:.35,.1,0" },
+            { "Live Bass", "Funk Envelope Bass",     "s1=Compressor:.5,.2,.5 s2=Auto-Wah:.7,.7,.75 amp=Bass_Modern:.25,.55,.5,.55,.5,.6 cab=4x10_Bass:.3,.05,0" },
+            { "Live Bass", "Motown Bass",            "amp=Bass_Tube:.3,.65,.45,.3,.4,.6 cab=1x15_Bass:.5,.15,0" },
+            { "Live Bass", "Modern Growl",           "s1=Compressor:.5,.2,.5 s2=Distortion:.4,.6,.5:.5 amp=Bass_Modern:.4,.6,.5,.6,.6,.55 cab=4x10_Bass:.3,.05,0" },
+            { "Live Bass", "Dub Sub",                "s4=3-Band_EQ:.7,.4,.3,.3 amp=Bass_Tube:.3,.7,.4,.2,.3,.6 cab=1x15_Bass:.6,.1,0" },
+            { "Live Bass", "Chorus Fretless",        "s1=Compressor:.45,.3,.5 s2=Chorus:.25,.45,.6:.45 amp=Bass_Modern:.2,.5,.5,.5,.5,.6 cab=4x10_Bass:.35,.1,0" },
+            { "Live Bass", "Metal Bass",             "s1=Noise_Gate:.4,.15 s2=Distortion:.45,.6,.5:.5 amp=Bass_Modern:.5,.6,.5,.6,.6,.55 cab=4x10_Bass:.3,.05,0" },
+
+            // ---------------- Live Vocal & Mic
+            { "Live Vocal & Mic", "Vocal Polish",    "s1=Noise_Gate:.25,.3 s2=Compressor:.5,.2,.4 s3=3-Band_EQ:.45,.55,.65,.7 s6=Plate_Reverb:.45,.3,.1:.2" },
+            { "Live Vocal & Mic", "Vocal Hall",      "s1=Noise_Gate:.25,.3 s2=Compressor:.5,.2,.55 s6=Hall_Reverb:.75,.4,.25:.3" },
+            { "Live Vocal & Mic", "Slapback Vocal",  "s2=Compressor:.5,.2,.55 s5=Delay:.15,.1,.6:.25 s6=Room_Reverb:.4,.5,.05:.15" },
+            { "Live Vocal & Mic", "Dreamy Vocal",    "s2=Compressor:.5,.2,.55 s4=Chorus:.2,.4,.7:.3 s5=Ping-Pong:.45,.45,.5:.3 s6=Hall_Reverb:.9,.35,.3:.4" },
+            { "Live Vocal & Mic", "Radio Voice",     "s2=Compressor:.7,.2,.6 amp=Lo-Fi_Practice:.3,.5,.6,.5,.5,.6 cab=Vintage_Radio:.3,0,0" },
+            { "Live Vocal & Mic", "Megaphone",       "s1=Distortion:.4,.5,.5 cab=Vintage_Radio:.3,0,0" },
+            { "Live Vocal & Mic", "Lo-Fi Vocal",     "s2=Compressor:.5,.2,.55 s3=Bit_Crusher:.45,.2,.6:.6 s5=Lo-Fi_Tape:.5,.4,.6" },
+            { "Live Vocal & Mic", "Robot Voice",     "s2=Bit_Crusher:.6,.4,.8 s3=Flanger:.05,.4,.9,.1:.7" },
+            { "Live Vocal & Mic", "Podcast Voice",   "s1=Noise_Gate:.3,.3 s2=Compressor:.6,.2,.45 s3=3-Band_EQ:.55,.45,.6,.6" },
+            { "Live Vocal & Mic", "Underwater Voice","s2=Auto_Filter:.1,.4,.15,.6 s4=Chorus:.3,.7,.4:.5 s6=Hall_Reverb:.8,.6,.2:.35" },
+            { "Live Vocal & Mic", "Sax & Horn Mic",  "s1=Compressor:.45,.3,.5 s4=3-Band_EQ:.45,.55,.55,.5 s6=Room_Reverb:.5,.5,.1:.2" },
+            { "Live Vocal & Mic", "Keys Line In Rotary", "s4=Rotary_Speaker:0,.3,.5 amp=Keys_Hi-Fi:.4,.5,.5,.5,.5,.5 cab=Full-Range_Keys:.4,.15,0" },
+        };
+        return list;
+    }
+}

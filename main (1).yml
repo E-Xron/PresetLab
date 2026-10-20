@@ -1,0 +1,98 @@
+name: Build PresetLab
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: PresetLab-Windows
+          - os: macos-latest
+            name: PresetLab-Mac
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        shell: bash
+        run: |
+          SRC=$(dirname "$(find . -name CMakeLists.txt -not -path './build/*' | head -n 1)")
+          echo "Project folder: $SRC"
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            cmake -S "$SRC" -B build -DCMAKE_BUILD_TYPE=Release -DCOPY_AFTER_BUILD=OFF \
+              -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+          else
+            cmake -S "$SRC" -B build -DCMAKE_BUILD_TYPE=Release -DCOPY_AFTER_BUILD=OFF
+          fi
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 4
+
+      - name: Package
+        shell: bash
+        run: |
+          ART="$(find build -type d -name PresetLab_artefacts | head -n 1)/Release"
+          FXA="$(find build -type d -name PresetLabFX_artefacts | head -n 1)/Release"
+          PROJ=$(dirname "$(find . -name CMakeLists.txt -not -path './build/*' | head -n 1)")
+          echo "Artefacts: $ART and $FXA"; ls "$ART" "$FXA"
+          mkdir -p stage dist
+          cp -R "$ART/VST3/PresetLab.vst3" stage/
+          cp -R "$FXA/VST3/PresetLab FX.vst3" stage/
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            # one .pkg that installs both VST3s, both AUs and the app into the right folders
+            V=root/Library/Audio/Plug-Ins/VST3; C=root/Library/Audio/Plug-Ins/Components
+            mkdir -p "$V" "$C" root/Applications
+            cp -R "$ART/VST3/PresetLab.vst3" "$FXA/VST3/PresetLab FX.vst3" "$V/"
+            cp -R "$ART/AU/PresetLab.component" "$FXA/AU/PresetLab FX.component" "$C/"
+            cp -R "$ART/Standalone/PresetLab.app" root/Applications/
+            for b in "$V/PresetLab.vst3" "$V/PresetLab FX.vst3" "$C/PresetLab.component" "$C/PresetLab FX.component" root/Applications/PresetLab.app; do
+              codesign --force --deep -s - "$b"
+            done
+            pkgbuild --analyze --root root components.plist
+            n=$(plutil -convert json -o - components.plist | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')
+            for ((i=0; i<n; i++)); do plutil -replace "$i.BundleIsRelocatable" -bool NO components.plist; done
+            pkgbuild --root root --component-plist components.plist --identifier com.retunelab.presetlab \
+              --version 1.0.0 --install-location / dist/PresetLab-Mac-Installer.pkg
+            printf '%s\n' \
+              "Double-click PresetLab-Mac-Installer.pkg. It installs:" \
+              "  VST3 -> /Library/Audio/Plug-Ins/VST3   PresetLab (instrument) + PresetLab FX (live input)" \
+              "  AU   -> /Library/Audio/Plug-Ins/Components   (Logic Pro, GarageBand)" \
+              "  App  -> Applications/PresetLab" \
+              "If macOS says it can't check the installer: right-click it > Open, or System Settings > Privacy & Security > Open Anyway." \
+              "Then rescan plug-ins in your DAW." > dist/INSTALL.txt
+          else
+            # one Setup.exe: both VST3s into C:\Program Files\Common Files\VST3 and the app into Program Files
+            cp "$ART/Standalone/PresetLab.exe" stage/
+            ISCC="/c/Program Files (x86)/Inno Setup 6/ISCC.exe"
+            if [ ! -f "$ISCC" ]; then choco install innosetup -y --no-progress; fi
+            "$ISCC" "//DSrcDir=$(cygpath -w "$PWD/stage")" "//DOutDir=$(cygpath -w "$PWD/dist")" "$(cygpath -w "$PROJ/installer/PresetLab.iss")"
+            printf '%s\r\n' \
+              "Run PresetLab-Setup.exe. It installs:" \
+              "  VST3 -> C:\Program Files\Common Files\VST3   PresetLab (instrument) + PresetLab FX (live input)" \
+              "  App  -> C:\Program Files\PresetLab  (Start menu + desktop shortcut)" \
+              "If Windows SmartScreen appears: More info > Run anyway." \
+              "Then rescan plug-ins in your DAW (Ableton: Settings > Plug-Ins > Rescan)." > dist/INSTALL.txt
+          fi
+
+      - name: Validate AUs (Logic compatibility)
+        if: runner.os == 'macOS'
+        continue-on-error: true
+        shell: bash
+        run: |
+          ART="$(find build -type d -name PresetLab_artefacts | head -n 1)/Release"
+          FXA="$(find build -type d -name PresetLabFX_artefacts | head -n 1)/Release"
+          mkdir -p ~/Library/Audio/Plug-Ins/Components
+          cp -R "$ART/AU/PresetLab.component" "$FXA/AU/PresetLab FX.component" ~/Library/Audio/Plug-Ins/Components/
+          killall -9 AudioComponentRegistrar 2>/dev/null || true
+          auval -v aumu Prlb Yrnm
+          auval -v aumf Prfx Yrnm
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/
